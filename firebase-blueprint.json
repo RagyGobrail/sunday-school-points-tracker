@@ -1,0 +1,55 @@
+{
+  "entities": {
+    "users": {
+      "title": "Leaders",
+      "description": "Authorized Sunday school class leaders and admins",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "leader"] },
+        "isAuthorized": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "displayName", "role", "isAuthorized"]
+    },
+    "children": {
+      "title": "Children",
+      "description": "Children enrolled in the Sunday school class",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "totalPoints": { "type": "number" },
+        "liturgyPoints": { "type": "number" },
+        "attendancePoints": { "type": "number" },
+        "participationPoints": { "type": "number" },
+        "lastScoreDate": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "totalPoints", "liturgyPoints", "attendancePoints", "participationPoints"]
+    },
+    "children/{childId}/scores": {
+      "title": "Scores",
+      "description": "Historical scoring records for each Friday",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "childId": { "type": "string" },
+        "category": { "type": "string", "enum": ["liturgy", "attendance", "participation"] },
+        "points": { "type": "number" },
+        "weekId": { "type": "string" },
+        "weekDate": { "type": "string" },
+        "leaderId": { "type": "string" },
+        "leaderName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["childId", "category", "points", "weekId", "weekDate", "leaderId"]
+    }
+  }
+}

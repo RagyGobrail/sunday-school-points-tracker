@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user is an admin
+    function isAdmin() {
+      return isAuthenticated() && (
+        (request.auth.token.email != null && request.auth.token.email == 'eskander.ragy@gmail.com') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+
+    // Helper function to check if the user is an authorized leader or admin
+    function isAuthorizedLeader() {
+      return isAuthenticated() && (
+        isAdmin() ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAuthorized == true)
+      );
+    }
+
+    // Users / Leaders collection
+    match /users/{userId} {
+      // Authenticated users can read their own user document, or authorized leaders/admins can read leaders list
+      allow read: if isAuthenticated();
+      // An authenticated user can create or update their own record, or Admin can manage any
+      allow create, update: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Children collection
+    match /children/{childId} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isAuthorizedLeader();
+
+      // Nested scores subcollection
+      match /scores/{scoreId} {
+        allow read: if isAuthenticated();
+        allow create, update, delete: if isAuthorizedLeader();
+      }
+    }
+
+    // Weekly summary or app config collection if needed
+    match /appConfig/{configId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+  }
+}
