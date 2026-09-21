@@ -50,6 +50,7 @@ export const QuickScoreForm: React.FC<QuickScoreFormProps> = ({
   // Sorting and Filtering
   const [sortBy, setSortBy] = useState<'name' | 'points'>('name');
   const [childSearch, setChildSearch] = useState<string>('');
+  const [genderSection, setGenderSection] = useState<'all' | 'boys' | 'girls'>('all');
 
   // Status & Feedback
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -87,6 +88,14 @@ export const QuickScoreForm: React.FC<QuickScoreFormProps> = ({
     }
     return list;
   }, [childrenList, childSearch, sortBy]);
+
+  const boysList = useMemo(() => {
+    return sortedAndFilteredChildren.filter(c => (c.gender || 'boy') === 'boy');
+  }, [sortedAndFilteredChildren]);
+
+  const girlsList = useMemo(() => {
+    return sortedAndFilteredChildren.filter(c => c.gender === 'girl');
+  }, [sortedAndFilteredChildren]);
 
   const selectedChild = childrenList.find(c => c.id === selectedChildId);
   const totalPointsToAdd = (liturgyPoints || 0) + (attendancePoints || 0) + (participationPoints || 0);
@@ -279,8 +288,8 @@ export const QuickScoreForm: React.FC<QuickScoreFormProps> = ({
       )}
 
       {/* 2. Step 1: Sorted Children Selection List */}
-      <div>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+      <div className="space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center font-black">1</span>
             <h3 className="text-sm font-black text-slate-800">
@@ -291,37 +300,80 @@ export const QuickScoreForm: React.FC<QuickScoreFormProps> = ({
             </span>
           </div>
 
-          {/* Sorting Buttons */}
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl self-start sm:self-auto border border-slate-200">
-            <button
-              type="button"
-              onClick={() => setSortBy('name')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1 ${
-                sortBy === 'name' 
-                  ? 'bg-white text-indigo-700 shadow-xs' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <ArrowUpDown className="w-3 h-3" />
-              <span>أبجدياً (أ-ي)</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setSortBy('points')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-black transition flex items-center gap-1 ${
-                sortBy === 'points' 
-                  ? 'bg-white text-indigo-700 shadow-xs' 
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Award className="w-3 h-3" />
-              <span>الأعلى نقاطاً</span>
-            </button>
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Gender Section Switcher */}
+            <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-black">
+              <button
+                type="button"
+                onClick={() => setGenderSection('all')}
+                className={`px-2.5 py-1 rounded-lg transition ${
+                  genderSection === 'all'
+                    ? 'bg-white text-indigo-700 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                الكل (مفصولين)
+              </button>
+              <button
+                type="button"
+                onClick={() => setGenderSection('boys')}
+                className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 ${
+                  genderSection === 'boys'
+                    ? 'bg-white text-sky-700 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <span>👦</span>
+                <span>البنين ({boysList.length})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setGenderSection('girls')}
+                className={`px-2.5 py-1 rounded-lg transition flex items-center gap-1 ${
+                  genderSection === 'girls'
+                    ? 'bg-white text-rose-700 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <span>👧</span>
+                <span>البنات ({girlsList.length})</span>
+              </button>
+            </div>
+
+            {/* Sorting Buttons */}
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+              <button
+                type="button"
+                onClick={() => setSortBy('name')}
+                title="ترتيب أبجدي"
+                className={`px-2.5 py-1 rounded-lg text-xs font-black transition flex items-center gap-1 ${
+                  sortBy === 'name' 
+                    ? 'bg-white text-indigo-700 shadow-xs' 
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ArrowUpDown className="w-3 h-3" />
+                <span>أبجدياً</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSortBy('points')}
+                title="ترتيب حسب النقاط"
+                className={`px-2.5 py-1 rounded-lg text-xs font-black transition flex items-center gap-1 ${
+                  sortBy === 'points' 
+                    ? 'bg-white text-indigo-700 shadow-xs' 
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Award className="w-3 h-3" />
+                <span>النقاط</span>
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Search Field */}
-        <div className="relative mb-3">
+        <div className="relative">
           <Search className="w-4 h-4 absolute right-3.5 top-3.5 text-slate-400" />
           <input
             id="search-child-input"
@@ -333,76 +385,193 @@ export const QuickScoreForm: React.FC<QuickScoreFormProps> = ({
           />
         </div>
 
-        {/* Kids Grid / List with Touch-Friendly Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-h-64 overflow-y-auto p-2 bg-slate-50/70 rounded-2xl border border-slate-200/80">
-          {sortedAndFilteredChildren.length === 0 ? (
-            <div className="col-span-full py-8 text-center text-xs font-bold text-slate-400">
-              لا توجد أسماء مطابقة لبحثك
-            </div>
-          ) : (
-            sortedAndFilteredChildren.map((child) => {
-              const isSelected = selectedChildId === child.id;
-              const hasBeenScored = scoredChildIds.includes(child.id);
-
-              return (
-                <button
-                  key={child.id}
-                  type="button"
-                  onClick={() => handleSelectChild(child)}
-                  className={`p-3 rounded-2xl border text-right transition flex flex-col justify-between gap-1.5 relative active:scale-95 text-xs ${
-                    isSelected
-                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20 ring-2 ring-indigo-500/30'
-                      : 'bg-white text-slate-800 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 shadow-2xs'
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-1">
-                    <span className={`font-black truncate ${isSelected ? 'text-white' : 'text-slate-900'}`}>
-                      {child.name}
-                    </span>
-                    {hasBeenScored ? (
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold flex items-center gap-0.5 ${
-                        isSelected ? 'bg-indigo-700 text-white' : 'bg-emerald-100 text-emerald-800'
-                      }`}>
-                        <Check className="w-3 h-3" />
-                        <span>تم</span>
-                      </span>
-                    ) : isSelected ? (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-md font-bold bg-indigo-700 text-indigo-100 flex items-center gap-0.5">
-                        <X className="w-3 h-3" />
-                        <span>إغلاق</span>
-                      </span>
-                    ) : null}
+        {/* Distinct Sections for Boys and Girls */}
+        {sortedAndFilteredChildren.length === 0 ? (
+          <div className="py-8 text-center text-xs font-bold text-slate-400 bg-slate-50 rounded-2xl border border-slate-200">
+            لا توجد أسماء مطابقة لبحثك
+          </div>
+        ) : (
+          <div className="space-y-4">
+            
+            {/* Section 1: Boys / قسم البنين */}
+            {(genderSection === 'all' || genderSection === 'boys') && (
+              <div className="p-3 bg-sky-50/40 rounded-2xl border border-sky-100 space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center text-sm font-black">
+                      👦
+                    </div>
+                    <h4 className="text-xs sm:text-sm font-black text-sky-950">
+                      قسم الأولاد (البنين)
+                    </h4>
                   </div>
+                  <span className="text-[11px] font-extrabold text-sky-700 bg-white px-2 py-0.5 rounded-md border border-sky-200">
+                    {boysList.length} ولد
+                  </span>
+                </div>
 
-                  <div className="flex items-center justify-between text-[11px] font-bold">
-                    <span className={isSelected ? 'text-indigo-100 font-extrabold' : 'text-slate-400'}>
-                      {isSelected ? 'اضغط للإغلاق' : 'المجموع:'}
-                    </span>
-                    <span className={`font-black ${isSelected ? 'text-white' : 'text-indigo-600'}`}>
-                      {child.totalPoints} نقطة
-                    </span>
+                {boysList.length === 0 ? (
+                  <div className="py-4 text-center text-xs font-bold text-slate-400">
+                    لا يوجد أولاد في نتائج البحث
                   </div>
-                </button>
-              );
-            })
-          )}
-        </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-52 overflow-y-auto p-1">
+                    {boysList.map((child) => {
+                      const isSelected = selectedChildId === child.id;
+                      const hasBeenScored = scoredChildIds.includes(child.id);
+
+                      return (
+                        <button
+                          key={child.id}
+                          type="button"
+                          onClick={() => handleSelectChild(child)}
+                          className={`p-2.5 rounded-xl border text-right transition flex flex-col justify-between gap-1 relative active:scale-95 text-xs ${
+                            isSelected
+                              ? 'bg-sky-600 text-white border-sky-600 shadow-md shadow-sky-600/20 ring-2 ring-sky-500/30'
+                              : 'bg-white text-slate-800 border-slate-200 hover:border-sky-400 hover:bg-sky-50/60 shadow-2xs'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span className={`font-black truncate ${isSelected ? 'text-white' : 'text-slate-900'}`}>
+                              👦 {child.name}
+                            </span>
+                            {hasBeenScored ? (
+                              <span className={`text-[9px] px-1 py-0.5 rounded-md font-bold flex items-center gap-0.5 shrink-0 ${
+                                isSelected ? 'bg-sky-700 text-white' : 'bg-emerald-100 text-emerald-800'
+                              }`}>
+                                <Check className="w-2.5 h-2.5" />
+                                <span>تم</span>
+                              </span>
+                            ) : isSelected ? (
+                              <span className="text-[9px] px-1 py-0.5 rounded-md font-bold bg-sky-700 text-sky-100 flex items-center gap-0.5 shrink-0">
+                                <X className="w-2.5 h-2.5" />
+                                <span>إغلاق</span>
+                              </span>
+                            ) : null}
+                          </div>
+
+                          <div className="flex items-center justify-between text-[10px] font-bold mt-0.5">
+                            <span className={isSelected ? 'text-sky-100' : 'text-slate-400'}>
+                              {isSelected ? 'اضغط للإغلاق' : 'المجموع:'}
+                            </span>
+                            <span className={`font-black ${isSelected ? 'text-white' : 'text-sky-700'}`}>
+                              {child.totalPoints} نقطة
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Section 2: Girls / قسم البنات */}
+            {(genderSection === 'all' || genderSection === 'girls') && (
+              <div className="p-3 bg-rose-50/40 rounded-2xl border border-rose-100 space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-lg bg-rose-100 text-rose-700 flex items-center justify-center text-sm font-black">
+                      👧
+                    </div>
+                    <h4 className="text-xs sm:text-sm font-black text-rose-950">
+                      قسم البنات
+                    </h4>
+                  </div>
+                  <span className="text-[11px] font-extrabold text-rose-700 bg-white px-2 py-0.5 rounded-md border border-rose-200">
+                    {girlsList.length} بنت
+                  </span>
+                </div>
+
+                {girlsList.length === 0 ? (
+                  <div className="py-4 text-center text-xs font-bold text-slate-400">
+                    لا توجد بنات في نتائج البحث
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-52 overflow-y-auto p-1">
+                    {girlsList.map((child) => {
+                      const isSelected = selectedChildId === child.id;
+                      const hasBeenScored = scoredChildIds.includes(child.id);
+
+                      return (
+                        <button
+                          key={child.id}
+                          type="button"
+                          onClick={() => handleSelectChild(child)}
+                          className={`p-2.5 rounded-xl border text-right transition flex flex-col justify-between gap-1 relative active:scale-95 text-xs ${
+                            isSelected
+                              ? 'bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-600/20 ring-2 ring-rose-500/30'
+                              : 'bg-white text-slate-800 border-slate-200 hover:border-rose-400 hover:bg-rose-50/60 shadow-2xs'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-1">
+                            <span className={`font-black truncate ${isSelected ? 'text-white' : 'text-slate-900'}`}>
+                              👧 {child.name}
+                            </span>
+                            {hasBeenScored ? (
+                              <span className={`text-[9px] px-1 py-0.5 rounded-md font-bold flex items-center gap-0.5 shrink-0 ${
+                                isSelected ? 'bg-rose-700 text-white' : 'bg-emerald-100 text-emerald-800'
+                              }`}>
+                                <Check className="w-2.5 h-2.5" />
+                                <span>تم</span>
+                              </span>
+                            ) : isSelected ? (
+                              <span className="text-[9px] px-1 py-0.5 rounded-md font-bold bg-rose-700 text-rose-100 flex items-center gap-0.5 shrink-0">
+                                <X className="w-2.5 h-2.5" />
+                                <span>إغلاق</span>
+                              </span>
+                            ) : null}
+                          </div>
+
+                          <div className="flex items-center justify-between text-[10px] font-bold mt-0.5">
+                            <span className={isSelected ? 'text-rose-100' : 'text-slate-400'}>
+                              {isSelected ? 'اضغط للإغلاق' : 'المجموع:'}
+                            </span>
+                            <span className={`font-black ${isSelected ? 'text-white' : 'text-rose-700'}`}>
+                              {child.totalPoints} نقطة
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+          </div>
+        )}
       </div>
 
       {/* 3. Step 2: 3 Text Boxes for القداس, الحضور, and المشاركة */}
       {selectedChild ? (
-        <form onSubmit={handleSubmit} className="p-5 sm:p-6 rounded-3xl bg-gradient-to-br from-indigo-50/40 via-white to-slate-50 border-2 border-indigo-200 shadow-lg space-y-5 animate-fadeIn">
+        <form 
+          onSubmit={handleSubmit} 
+          className={`p-5 sm:p-6 rounded-3xl border-2 shadow-lg space-y-5 animate-fadeIn ${
+            selectedChild.gender === 'girl'
+              ? 'bg-gradient-to-br from-rose-50/40 via-white to-slate-50 border-rose-200'
+              : 'bg-gradient-to-br from-sky-50/40 via-white to-slate-50 border-sky-200'
+          }`}
+        >
           
           {/* Focused Child Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-indigo-100">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white font-black text-lg flex items-center justify-center shadow-md shadow-indigo-600/20">
-                <User className="w-6 h-6" />
+              <div className={`w-12 h-12 rounded-2xl text-white font-black text-xl flex items-center justify-center shadow-md ${
+                selectedChild.gender === 'girl'
+                  ? 'bg-rose-500 shadow-rose-500/25'
+                  : 'bg-sky-600 shadow-sky-600/25'
+              }`}>
+                {selectedChild.gender === 'girl' ? '👧' : '👦'}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-100">
-                    رصد درجات الطفل
+                  <span className={`text-xs font-black px-2.5 py-0.5 rounded-full border ${
+                    selectedChild.gender === 'girl'
+                      ? 'text-rose-700 bg-rose-50 border-rose-200'
+                      : 'text-sky-700 bg-sky-50 border-sky-200'
+                  }`}>
+                    {selectedChild.gender === 'girl' ? 'رصد درجات (بنت)' : 'رصد درجات (ولد)'}
                   </span>
                   <span className="text-xs text-slate-400 font-bold">
                     {currentFriday.label}
@@ -617,7 +786,11 @@ export const QuickScoreForm: React.FC<QuickScoreFormProps> = ({
                 id="submit-points-btn"
                 type="submit"
                 disabled={isSubmitting || totalPointsToAdd <= 0}
-                className="min-h-[52px] px-6 rounded-2xl text-sm font-black text-white bg-indigo-600 hover:bg-indigo-700 active:scale-95 transition shadow-lg shadow-indigo-600/25 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className={`min-h-[52px] px-6 rounded-2xl text-sm font-black text-white active:scale-95 transition shadow-lg disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                  selectedChild.gender === 'girl'
+                    ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/25'
+                    : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/25'
+                }`}
               >
                 <PlusCircle className="w-5 h-5 shrink-0" />
                 <span>

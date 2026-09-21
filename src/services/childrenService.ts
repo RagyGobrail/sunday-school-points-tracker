@@ -16,7 +16,7 @@ import {
   collectionGroup
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import { Child, ScoreRecord, ScoreCategory } from '../types';
+import { Child, ScoreRecord, ScoreCategory, Gender } from '../types';
 
 /**
  * Children Firestore Service
@@ -38,6 +38,7 @@ export function subscribeToChildren(
         list.push({
           id: d.id,
           name: data.name || '',
+          gender: data.gender === 'girl' ? 'girl' : 'boy',
           photoUrl: data.photoUrl || '',
           totalPoints: Number(data.totalPoints || 0),
           liturgyPoints: Number(data.liturgyPoints || 0),
@@ -60,11 +61,12 @@ export function subscribeToChildren(
 }
 
 // Add a new child
-export async function addChild(name: string, photoUrl?: string): Promise<string> {
+export async function addChild(name: string, gender: Gender = 'boy', photoUrl?: string): Promise<string> {
   const childrenCol = collection(db, 'children');
   const now = new Date().toISOString();
   const docRef = await addDoc(childrenCol, {
     name: name.trim(),
+    gender: gender === 'girl' ? 'girl' : 'boy',
     photoUrl: photoUrl || '',
     totalPoints: 0,
     liturgyPoints: 0,
@@ -76,8 +78,8 @@ export async function addChild(name: string, photoUrl?: string): Promise<string>
   return docRef.id;
 }
 
-// Update child name or photo
-export async function updateChild(childId: string, updates: Partial<Pick<Child, 'name' | 'photoUrl'>>): Promise<void> {
+// Update child name, gender or photo
+export async function updateChild(childId: string, updates: Partial<Pick<Child, 'name' | 'gender' | 'photoUrl'>>): Promise<void> {
   const childRef = doc(db, 'children', childId);
   await updateDoc(childRef, {
     ...updates,

@@ -14,9 +14,15 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
   onSelectChild
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [genderFilter, setGenderFilter] = useState<'all' | 'boy' | 'girl'>('all');
 
-  // Sort descending by total points
-  const sortedChildren = [...childrenList].sort((a, b) => b.totalPoints - a.totalPoints);
+  // Filter by gender first, then sort descending by total points
+  const genderFilteredList = childrenList.filter(c => {
+    if (genderFilter === 'all') return true;
+    return (c.gender || 'boy') === genderFilter;
+  });
+
+  const sortedChildren = [...genderFilteredList].sort((a, b) => b.totalPoints - a.totalPoints);
 
   const filteredChildren = sortedChildren.filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -75,24 +81,65 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
         </button>
       </div>
 
-      {/* Search Input */}
-      <div className="relative">
-        <Search className="w-4 h-4 absolute right-3.5 top-3.5 text-slate-400" />
-        <input
-          id="leaderboard-search"
-          type="text"
-          placeholder="ابحث عن اسم طفل في لوحة الشرف..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full min-h-[44px] pr-10 pl-3 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold"
-        />
+      {/* Search Input & Gender Filter */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+        <div className="relative flex-1">
+          <Search className="w-4 h-4 absolute right-3.5 top-3.5 text-slate-400" />
+          <input
+            id="leaderboard-search"
+            type="text"
+            placeholder="ابحث عن اسم طفل في لوحة الشرف..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full min-h-[44px] pr-10 pl-3 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm focus:outline-hidden focus:ring-2 focus:ring-indigo-500 font-semibold"
+          />
+        </div>
+
+        {/* Gender Filter Buttons */}
+        <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200 self-start sm:self-auto shrink-0">
+          <button
+            type="button"
+            onClick={() => setGenderFilter('all')}
+            className={`px-3 py-2 rounded-xl text-xs font-black transition ${
+              genderFilter === 'all'
+                ? 'bg-white text-indigo-700 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            الكل ({childrenList.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setGenderFilter('boy')}
+            className={`px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1 ${
+              genderFilter === 'boy'
+                ? 'bg-white text-sky-700 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <span>👦</span>
+            <span>بنين ({childrenList.filter(c => (c.gender || 'boy') === 'boy').length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setGenderFilter('girl')}
+            className={`px-3 py-2 rounded-xl text-xs font-black transition flex items-center gap-1 ${
+              genderFilter === 'girl'
+                ? 'bg-white text-rose-700 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <span>👧</span>
+            <span>بنات ({childrenList.filter(c => c.gender === 'girl').length})</span>
+          </button>
+        </div>
       </div>
 
       {/* Leaderboard Cards / List */}
       {filteredChildren.length === 0 ? (
         <div className="p-12 text-center bg-white rounded-2xl border border-slate-200">
-          <p className="text-base font-bold text-slate-600">لم يتم تسجيل أي نقاط حتى الآن</p>
-          <p className="text-xs text-slate-400 mt-1">ابدأ بإضافة نقاط للأطفال يوم الجمعة لتظهر لوحة الشرف</p>
+          <p className="text-base font-bold text-slate-600">لا توجد نتائج مطابقة</p>
+          <p className="text-xs text-slate-400 mt-1">جرب تغيير فلتر البحث أو التصنيف</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -113,7 +160,10 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
                       {rankInfo.badge}
                     </span>
                     <div>
-                      <h4 className="font-extrabold text-sm text-slate-900">{child.name}</h4>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm">{child.gender === 'girl' ? '👧' : '👦'}</span>
+                        <h4 className="font-extrabold text-sm text-slate-900">{child.name}</h4>
+                      </div>
                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 mt-0.5">
                         <span className="text-amber-800">قداس: {child.liturgyPoints || 0}</span>
                         <span>•</span>
@@ -169,6 +219,7 @@ export const LeaderboardScreen: React.FC<LeaderboardScreenProps> = ({
 
                       <td className="py-3.5 px-4 font-bold text-slate-800">
                         <div className="flex items-center gap-2">
+                          <span>{child.gender === 'girl' ? '👧' : '👦'}</span>
                           <span>{child.name}</span>
                           {rank === 1 && (
                             <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-amber-500 text-white font-black">

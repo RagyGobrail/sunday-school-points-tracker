@@ -17,9 +17,12 @@ export interface LeaderUser {
   lastLoginAt?: string;
 }
 
+export type Gender = 'boy' | 'girl';
+
 export interface Child {
   id: string;
   name: string;
+  gender?: Gender; // 'boy' | 'girl'
   photoUrl?: string;
   totalPoints: number;
   liturgyPoints: number;

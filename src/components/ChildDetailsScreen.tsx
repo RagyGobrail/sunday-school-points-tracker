@@ -202,7 +202,16 @@ export const ChildDetailsScreen: React.FC<ChildDetailsScreenProps> = ({ child, o
             <ArrowRight className="w-5 h-5" />
           </button>
           <div>
-            <span className="text-xs font-black text-indigo-600">سجل درجات الطفل</span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black text-indigo-600">سجل درجات الطفل</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold border ${
+                child.gender === 'girl'
+                  ? 'bg-rose-50 text-rose-700 border-rose-200'
+                  : 'bg-sky-50 text-sky-700 border-sky-200'
+              }`}>
+                {child.gender === 'girl' ? '👧 بنت' : '👦 ولد'}
+              </span>
+            </div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-900">{child.name}</h2>
           </div>
         </div>
