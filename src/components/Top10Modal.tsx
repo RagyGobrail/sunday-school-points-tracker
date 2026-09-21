@@ -177,12 +177,6 @@ export const Top10Modal: React.FC<Top10ModalProps> = ({
               <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                 🏆 أفضل 10
               </h1>
-              <p className="text-sm sm:text-base font-bold text-amber-800 mt-1">
-                نقاط الفصل - مدارس الأحد بالكنيسة القبطية الأرثوذكسية
-              </p>
-              <div className="inline-block mt-2 px-3 py-1 bg-amber-100/90 text-amber-900 font-semibold text-xs rounded-full border border-amber-300/50">
-                {weekLabel}
-              </div>
             </div>
 
             {/* List */}
@@ -213,8 +207,9 @@ export const Top10Modal: React.FC<Top10ModalProps> = ({
                           {badge.icon}
                         </span>
                         <div>
-                          <div className="font-extrabold text-base sm:text-lg text-slate-800">
-                            {child.name}
+                          <div className="font-extrabold text-base sm:text-lg text-slate-800 flex items-center gap-1.5">
+                            <span>{child.gender === 'girl' ? '👧' : '👦'}</span>
+                            <span>{child.name}</span>
                           </div>
                           <div className="text-[11px] font-semibold text-slate-500">
                             {badge.label}
@@ -233,12 +228,6 @@ export const Top10Modal: React.FC<Top10ModalProps> = ({
                 })}
               </div>
             )}
-
-            {/* Footer Watermark */}
-            <div className="mt-8 pt-4 border-t border-amber-200/60 flex items-center justify-between text-[11px] font-medium text-slate-500">
-              <span>«مَنْ كَانَ أَمِينًا فِي الْقَلِيلِ فَهُوَ أَمِينٌ أَيْضًا فِي الْكَثِيرِ»</span>
-              <span className="text-amber-700 font-bold">فصل مدارس الأحد</span>
-            </div>
           </div>
         </div>
 

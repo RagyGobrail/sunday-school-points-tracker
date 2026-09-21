@@ -1,8 +1,8 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { 
-  getFirestore, 
-  enableIndexedDbPersistence,
-  CACHE_SIZE_UNLIMITED 
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager
 } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import configJson from '../firebase-applet-config.json';
@@ -17,25 +17,12 @@ export const app = getApps().length > 0 ? getApp() : initializeApp({
   appId: configJson.appId,
 });
 
-// Initialize Firestore (default database for standard Firebase projects)
-export const db = configJson.firestoreDatabaseId && configJson.firestoreDatabaseId !== '(default)'
-  ? getFirestore(app, configJson.firestoreDatabaseId)
-  : getFirestore(app);
-
-// Enable offline persistence gracefully
-try {
-  if (typeof window !== 'undefined') {
-    enableIndexedDbPersistence(db, { forceOwnership: false }).catch((err) => {
-      if (err.code === 'failed-precondition') {
-        console.warn('Firestore persistence failed: Multiple tabs open');
-      } else if (err.code === 'unimplemented') {
-        console.warn('Firestore persistence is not supported in this browser environment');
-      }
-    });
-  }
-} catch (e) {
-  console.warn('Offline persistence initialization error:', e);
-}
+// Initialize Firestore with modern persistent cache
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager()
+  })
+}, configJson.firestoreDatabaseId && configJson.firestoreDatabaseId !== '(default)' ? configJson.firestoreDatabaseId : undefined);
 
 // Authentication and Google Auth Provider
 export const auth = getAuth(app);

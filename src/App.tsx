@@ -101,16 +101,16 @@ export default function App() {
       
       {/* Top Header / App Bar */}
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
-        <div className="max-w-5xl mx-auto px-3 sm:px-6 h-13 sm:h-16 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-base sm:text-xl shadow-xs shrink-0">
+        <div className="max-w-5xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-indigo-600 text-white flex items-center justify-center font-black text-lg sm:text-xl shadow-xs shrink-0">
               ✟
             </div>
             <div className="min-w-0">
               <h1 className="text-sm sm:text-base font-black text-slate-900 leading-tight truncate">
                 مدارس الأحد
               </h1>
-              <p className="text-[10px] sm:text-xs font-semibold text-slate-500 truncate max-w-[110px] xs:max-w-[150px] sm:max-w-none">
+              <p className="text-[11px] sm:text-xs font-semibold text-slate-500 truncate max-w-[130px] sm:max-w-none">
                 {leaderProfile?.displayName} {isAdmin && '• مشرف'}
               </p>
             </div>
@@ -124,7 +124,7 @@ export default function App() {
               <button
                 onClick={() => setShowAdminModal(true)}
                 title="إدارة القادة"
-                className="p-1.5 sm:p-2.5 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition min-w-[36px] min-h-[36px] flex items-center justify-center"
+                className="p-2 sm:p-2.5 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition min-w-[38px] min-h-[38px] flex items-center justify-center"
               >
                 <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
@@ -133,7 +133,7 @@ export default function App() {
             <button
               onClick={() => logout()}
               title="تسجيل الخروج"
-              className="p-1.5 sm:p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition min-w-[36px] min-h-[36px] flex items-center justify-center"
+              className="p-2 sm:p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition min-w-[38px] min-h-[38px] flex items-center justify-center"
             >
               <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
