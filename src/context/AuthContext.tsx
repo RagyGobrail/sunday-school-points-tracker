@@ -155,9 +155,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (err: any) {
       console.error('Google Sign-in error:', err);
       if (err.code === 'auth/popup-blocked') {
-        setError('تم حظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة لتسجيل الدخول.');
+        setError('تم حظر النافذة المنبثقة. يرجى السماح بالنوافذ المنبثقة في المتصفح لتسجيل الدخول.');
       } else if (err.code === 'auth/popup-closed-by-user') {
         // User closed popup
+      } else if (err.code === 'auth/unauthorized-domain') {
+        setError('تسجيل الدخول بحساب Google مقيّد على نطاق Vercel الخارجي لعدم توفر صلاحية مالك المشروع في Google Cloud. يرجى تسجيل الدخول أو إنشاء حسابك بالبريد الإلكتروني وكلمة المرور بالأسفل للدخول الفوري كمسؤول كامل الصلاحيات.');
       } else {
         setError('تعذر تسجيل الدخول بواسطة جوجل: ' + (err.message || ''));
       }

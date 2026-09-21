@@ -17,8 +17,10 @@ export const app = getApps().length > 0 ? getApp() : initializeApp({
   appId: configJson.appId,
 });
 
-// Initialize Firestore with custom database ID from config if present
-export const db = getFirestore(app, configJson.firestoreDatabaseId || '(default)');
+// Initialize Firestore (default database for standard Firebase projects)
+export const db = configJson.firestoreDatabaseId && configJson.firestoreDatabaseId !== '(default)'
+  ? getFirestore(app, configJson.firestoreDatabaseId)
+  : getFirestore(app);
 
 // Enable offline persistence gracefully
 try {

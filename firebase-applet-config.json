@@ -1,12 +1,12 @@
 {
-  "projectId": "abiding-phosphene-vp928",
-  "appId": "1:593838258303:web:bbf2b0aa1098fc5721a74a",
-  "apiKey": "AIzaSyBprFx4rgF1O5vargTzj1lGQG0ffOWkjtw",
-  "authDomain": "abiding-phosphene-vp928.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-f9da1519-d33b-4c94-b287-206695193c7f",
-  "storageBucket": "abiding-phosphene-vp928.firebasestorage.app",
-  "messagingSenderId": "593838258303",
-  "measurementId": "",
-  "oAuthClientId": "593838258303-2cbqf7f5vv18igsbhv9ts3qh0tlf8gjt.apps.googleusercontent.com",
+  "projectId": "sunday-school-points-tracker",
+  "appId": "1:196976924531:web:6bb1982b3f60da977b9706",
+  "apiKey": "AIzaSyDAzf9AC4Y803tUresbK_TRMD5JLaLAFcI",
+  "authDomain": "sunday-school-points-tracker.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "sunday-school-points-tracker.firebasestorage.app",
+  "messagingSenderId": "196976924531",
+  "measurementId": "G-7YWQWJ8EEF",
+  "oAuthClientId": "",
   "recaptchaSiteKey": ""
 }
